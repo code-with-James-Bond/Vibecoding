@@ -8,12 +8,11 @@ const CustomCursor: React.FC = () => {
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
 
-  const springConfig = { damping: 30, stiffness: 200 };
+  const springConfig = { damping: 40, stiffness: 300 };
   const springX = useSpring(cursorX, springConfig);
   const springY = useSpring(cursorY, springConfig);
 
   useEffect(() => {
-    // Check if device is touch-enabled
     const checkTouch = () => {
       setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
     };
@@ -48,9 +47,8 @@ const CustomCursor: React.FC = () => {
       window.removeEventListener('mousemove', moveCursor);
       window.removeEventListener('mouseover', handleMouseOver);
     };
-  }, [isTouchDevice]);
+  }, [isTouchDevice, cursorX, cursorY]);
 
-  // Don't render cursor on mobile/tablets
   if (isTouchDevice) return null;
 
   return (
@@ -65,12 +63,12 @@ const CustomCursor: React.FC = () => {
     >
       <motion.div
         animate={{
-          width: isHovering ? 40 : 12,
-          height: isHovering ? 40 : 12,
-          backgroundColor: isHovering ? 'rgba(0,0,0,0.1)' : 'rgba(0,0,0,1)',
-          border: isHovering ? '1px solid rgba(0,0,0,0.2)' : '1px solid rgba(0,0,0,0)',
+          width: isHovering ? 50 : 8,
+          height: isHovering ? 50 : 8,
+          backgroundColor: isHovering ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,1)',
+          border: isHovering ? '1px solid rgba(255,255,255,0.2)' : '1px solid rgba(255,255,255,0)',
         }}
-        transition={{ type: 'spring', damping: 25, stiffness: 250 }}
+        transition={{ type: 'spring', damping: 30, stiffness: 300 }}
         className="rounded-full"
       />
     </motion.div>

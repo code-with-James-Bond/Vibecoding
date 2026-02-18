@@ -3,14 +3,24 @@ import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, push, onValue, remove } from 'firebase/database';
 import { ModelData } from '../types';
 
+// Safely access environment variables with fallbacks to prevent crashes
+const getEnv = (key: string, fallback: string) => {
+  try {
+    // @ts-ignore
+    return (typeof process !== 'undefined' && process.env && process.env[key]) || fallback;
+  } catch {
+    return fallback;
+  }
+};
+
 const firebaseConfig = {
-  apiKey: process.env.REACT_APP_FIREBASE_API_KEY || "YOUR_API_KEY",
-  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN || "YOUR_AUTH_DOMAIN",
+  apiKey: getEnv('REACT_APP_FIREBASE_API_KEY', "AIzaSyAs-FakeKey-ReplaceMe"),
+  authDomain: getEnv('REACT_APP_FIREBASE_AUTH_DOMAIN', "d-portfolio-27.firebaseapp.com"),
   databaseURL: "https://d-portfolio-27-default-rtdb.firebaseio.com/",
-  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID || "YOUR_PROJECT_ID",
-  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET || "YOUR_STORAGE_BUCKET",
-  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID || "YOUR_MESSAGING_SENDER_ID",
-  appId: process.env.REACT_APP_FIREBASE_APP_ID || "YOUR_APP_ID"
+  projectId: getEnv('REACT_APP_FIREBASE_PROJECT_ID', "d-portfolio-27"),
+  storageBucket: getEnv('REACT_APP_FIREBASE_STORAGE_BUCKET', "d-portfolio-27.appspot.com"),
+  messagingSenderId: getEnv('REACT_APP_FIREBASE_MESSAGING_SENDER_ID', "000000000000"),
+  appId: getEnv('REACT_APP_FIREBASE_APP_ID', "1:000000000000:web:abcdef")
 };
 
 const app = initializeApp(firebaseConfig);
@@ -31,6 +41,9 @@ export const subscribeToModels = (callback: (models: ModelData[]) => void) => {
     } else {
       callback([]);
     }
+  }, (error) => {
+    console.error("Firebase subscription error:", error);
+    callback([]);
   });
   return unsubscribe;
 };
