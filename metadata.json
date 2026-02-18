@@ -1,0 +1,5 @@
+{
+  "name": "Luxe3D Portfolio",
+  "description": "An ultra-luxury interactive 3D portfolio featuring a glassmorphism UI and dynamic model loading via Firebase.",
+  "requestFramePermissions": []
+}
