@@ -9,7 +9,7 @@ import CustomCursor from './components/CustomCursor';
 import { subscribeToModels } from './services/firebase';
 import { ModelData } from './types';
 
-// System Credentials
+// Secure Credentials
 const ADMIN_EMAIL = "jamesjames00741@gmail.com";
 const ADMIN_PASS = "James Bond 27";
 
@@ -20,44 +20,34 @@ const ProductCard: React.FC<{ model: ModelData; index: number; onOpen: (m: Model
     <motion.div 
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.8, delay: index * 0.1, ease: [0.215, 0.61, 0.355, 1] }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 1, delay: index * 0.05, ease: [0.16, 1, 0.3, 1] }}
       className="group cursor-pointer flex flex-col h-full"
       onClick={() => onOpen(model)}
     >
-      <div className="aspect-[3/4] bg-[#f5f5f5] relative overflow-hidden rounded-[2.5rem] shadow-sm group-hover:shadow-xl transition-all duration-700">
+      <div className="aspect-[4/5] bg-[#f9f9f9] relative overflow-hidden rounded-[2.5rem] border border-black/[0.03]">
         {model.thumbnailUrl && !imgError ? (
           <img 
             src={model.thumbnailUrl} 
-            className="w-full h-full object-cover transition-transform duration-1000 ease-[0.16, 1, 0.3, 1] group-hover:scale-105" 
+            className="w-full h-full object-cover transition-transform duration-[1.5s] ease-[0.16, 1, 0.3, 1] group-hover:scale-110" 
             alt={model.name}
             onError={() => setImgError(true)}
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gray-50/50">
-            <span className="text-[9px] font-black uppercase tracking-[0.5em] text-black/5 italic">No Frame</span>
+          <div className="w-full h-full flex items-center justify-center">
+            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-black/5">No Preview</span>
           </div>
         )}
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/[0.02] transition-colors duration-500" />
-        
-        {/* Floating Tag */}
-        <div className="absolute top-8 right-8 overflow-hidden">
-          <motion.div 
-            initial={{ y: 20, opacity: 0 }}
-            whileHover={{ y: 0, opacity: 1 }}
-            className="px-4 py-2 bg-white/80 backdrop-blur-md rounded-full border border-black/5 shadow-sm"
-          >
-            <span className="text-[8px] font-black uppercase tracking-widest text-black">Explore 3D</span>
-          </motion.div>
-        </div>
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/[0.03] transition-colors duration-700" />
       </div>
-      <div className="mt-10 px-4">
-        <div className="flex justify-between items-baseline mb-2">
-          <h2 className="text-2xl font-bold tracking-tight text-black group-hover:translate-x-1 transition-transform duration-500">{model.name}</h2>
-          <span className="text-[9px] font-black text-black/10 uppercase tracking-[0.2em]">0{index + 1}</span>
+      <div className="mt-8 px-2 flex justify-between items-end">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tighter text-black leading-none mb-2">{model.name}</h2>
+          <p className="text-[9px] font-black uppercase tracking-[0.3em] text-black/30 italic">Ref. {model.public_id.slice(-8)}</p>
         </div>
-        <div className="h-[1px] w-0 group-hover:w-full bg-black/5 transition-all duration-700" />
-        <p className="text-[9px] font-bold uppercase tracking-[0.4em] text-black/30 mt-4">Asset ID: {model.public_id.slice(-8)}</p>
+        <div className="w-8 h-8 rounded-full border border-black/5 flex items-center justify-center group-hover:bg-black group-hover:text-white transition-all duration-500">
+           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3 h-3"><path strokeLinecap="round" strokeLinejoin="round" d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25" /></svg>
+        </div>
       </div>
     </motion.div>
   );
@@ -67,100 +57,64 @@ const LoginModal: React.FC<{ isOpen: boolean; onClose: () => void; onLogin: () =
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setError('');
-    
-    // Simulate system handshake
-    await new Promise(r => setTimeout(r, 800));
-    
     if (email === ADMIN_EMAIL && password === ADMIN_PASS) {
       onLogin();
       onClose();
     } else {
-      setError('System verification failed. Credentials rejected.');
-      setLoading(false);
+      setError('System rejection: Invalid credentials.');
     }
   };
 
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[3000] flex items-center justify-center p-6">
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-black/20 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/40 backdrop-blur-md"
           />
           <motion.div 
-            initial={{ opacity: 0, scale: 0.95, y: 30 }}
+            initial={{ opacity: 0, scale: 0.9, y: 40 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 30 }}
-            className="w-full max-w-md bg-white/90 backdrop-blur-3xl rounded-[3rem] p-12 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] border border-white relative z-10"
+            exit={{ opacity: 0, scale: 0.9, y: 40 }}
+            className="w-full max-w-md bg-white/80 backdrop-blur-3xl rounded-[3rem] p-12 shadow-2xl border border-white/50 relative z-10"
           >
-            <div className="text-center mb-12">
-               <div className="w-16 h-16 bg-black rounded-full mx-auto mb-8 flex items-center justify-center shadow-2xl shadow-black/20">
-                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="white" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" /></svg>
-               </div>
-               <h2 className="text-3xl font-[900] tracking-tighter text-black uppercase leading-none">Access Control</h2>
-               <p className="text-[10px] font-black text-black/20 uppercase tracking-[0.4em] mt-4">Authorized Personnel Only</p>
-            </div>
+            <h2 className="text-4xl font-[900] tracking-tighter text-black mb-2 uppercase">Entry</h2>
+            <p className="text-[10px] font-black text-black/20 uppercase tracking-[0.4em] mb-10">Vault Authorization</p>
             
             <form onSubmit={handleLogin} className="space-y-6">
-              <div className="space-y-2">
-                <label className="text-[8px] font-black uppercase tracking-widest text-black/30 ml-4">Identifier</label>
+              <div>
+                <label className="text-[9px] font-black uppercase tracking-widest text-black/40 block mb-3 ml-4">Identifier</label>
                 <input 
-                  type="email" 
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-black/5 border border-transparent rounded-2xl px-6 py-5 text-sm font-bold outline-none focus:bg-white focus:ring-1 focus:ring-black/10 transition-all"
-                  placeholder="name@luxe.vault"
-                  required
+                  type="email" value={email} onChange={(e) => setEmail(e.target.value)}
+                  className="w-full bg-black/5 border border-transparent rounded-2xl px-6 py-5 text-sm font-bold outline-none focus:bg-white focus:ring-4 focus:ring-black/5 transition-all"
+                  placeholder="name@archive.luxe" required
                 />
               </div>
-              <div className="space-y-2 relative">
-                <label className="text-[8px] font-black uppercase tracking-widest text-black/30 ml-4">Passkey</label>
+              <div className="relative">
+                <label className="text-[9px] font-black uppercase tracking-widest text-black/40 block mb-3 ml-4">Passcode</label>
                 <input 
-                  type={showPassword ? "text" : "password"} 
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-black/5 border border-transparent rounded-2xl px-6 py-5 text-sm font-bold outline-none focus:bg-white focus:ring-1 focus:ring-black/10 transition-all pr-16"
-                  placeholder="••••••••"
-                  required
+                  type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)}
+                  className="w-full bg-black/5 border border-transparent rounded-2xl px-6 py-5 text-sm font-bold outline-none focus:bg-white focus:ring-4 focus:ring-black/5 transition-all"
+                  placeholder="••••••••" required
                 />
                 <button 
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-6 bottom-5 text-[9px] font-black uppercase tracking-widest text-black/30 hover:text-black transition-colors"
+                  type="button" onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-6 top-[52px] text-[10px] font-black uppercase tracking-widest text-black/30 hover:text-black"
                 >
                   {showPassword ? "Hide" : "Show"}
                 </button>
               </div>
-              
-              <AnimatePresence>
-                {error && (
-                  <motion.p 
-                    initial={{ opacity: 0, height: 0 }} 
-                    animate={{ opacity: 1, height: 'auto' }} 
-                    className="text-[9px] font-black text-red-500 uppercase tracking-widest text-center"
-                  >
-                    {error}
-                  </motion.p>
-                )}
-              </AnimatePresence>
-
-              <button 
-                type="submit"
-                disabled={loading}
-                className="w-full bg-black text-white font-black uppercase tracking-[0.3em] py-6 rounded-[1.5rem] hover:scale-[1.02] active:scale-[0.98] transition-all shadow-2xl shadow-black/20 disabled:opacity-50"
-              >
-                {loading ? 'Validating...' : 'Bypass Guard'}
+              {error && <p className="text-[10px] font-black text-red-500 uppercase tracking-widest bg-red-50 p-4 rounded-xl text-center">{error}</p>}
+              <button type="submit" className="w-full bg-black text-white font-black uppercase tracking-[0.3em] py-6 rounded-2xl hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-black/20">
+                Unlock System
               </button>
             </form>
           </motion.div>
@@ -178,15 +132,11 @@ const Storefront = () => {
   const lenisRef = useRef<Lenis | null>(null);
   const navigate = useNavigate();
 
-  const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
-
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 1.2,
+      duration: 1.5,
       smoothWheel: true,
-      wheelMultiplier: 1,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      wheelMultiplier: 0.9,
     });
     lenisRef.current = lenis;
     function raf(time: number) {
@@ -219,63 +169,44 @@ const Storefront = () => {
     }
   }, [selectedModel, showLogin]);
 
-  const handleAdminClick = () => {
-    if (isLoggedIn) {
-      navigate('/admin');
-    } else {
-      setShowLogin(true);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-white flex flex-col selection:bg-black selection:text-white">
-      {/* Progress Bar */}
-      <motion.div className="fixed top-0 left-0 right-0 h-1 bg-black z-[1000] origin-left" style={{ scaleX }} />
-      
       <Navbar />
 
-      <main className="flex-grow pt-40 sm:pt-64 pb-32 max-w-[1400px] mx-auto w-full px-8 sm:px-16">
+      <main className="flex-grow pt-48 sm:pt-64 pb-32 max-w-[1400px] mx-auto w-full px-8 sm:px-16">
         <header className="mb-40 sm:mb-64">
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="flex items-center gap-6 mb-12">
-               <span className="text-[10px] font-black uppercase tracking-[0.6em] text-black/20">Collection v.025</span>
-               <div className="h-[1px] w-20 bg-black/10" />
-            </div>
-            <h1 className="text-[16vw] sm:text-[11vw] font-[900] tracking-tighter text-black leading-[0.75] mb-16">
-              Immersive<br/>Spatial
+            <h1 className="text-[15vw] sm:text-[10vw] font-[900] tracking-tighter text-black leading-[0.75] mb-12">
+              The Luxe<br/>Archive
             </h1>
-            <p className="max-w-xl text-black/50 font-medium text-2xl leading-relaxed">
-              Curating high-fidelity assets for the spatial web. Bridging the gap between code and aesthetic luxury.
+            <div className="h-[1px] w-24 bg-black mb-12 opacity-10" />
+            <p className="max-w-md text-black/40 font-medium text-xl leading-relaxed">
+              Curated spatial assets for a high-fidelity digital existence.
             </p>
           </motion.div>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-32 sm:gap-x-20 sm:gap-y-48">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-24 sm:gap-x-16 sm:gap-y-40">
           <AnimatePresence>
             {models.map((model, idx) => (
               <ProductCard key={model.id} model={model} index={idx} onOpen={setSelectedModel} />
             ))}
           </AnimatePresence>
         </div>
-        
-        {models.length === 0 && (
-           <div className="py-40 text-center">
-             <span className="text-[10px] font-black uppercase tracking-[1em] text-black/10 animate-pulse">Scanning Archive...</span>
-           </div>
-        )}
       </main>
 
-      <div className="py-40 flex justify-center items-center flex-col gap-8 bg-[#fafafa]">
-        <div className="h-20 w-[1px] bg-gradient-to-b from-transparent to-black/10" />
+      {/* Admin Button at Bottom (Subtle/Faded) */}
+      <div className="py-32 flex flex-col items-center gap-12 bg-gray-50/30">
+        <div className="w-[1px] h-24 bg-gradient-to-b from-transparent to-black/5" />
         <button 
-          onClick={handleAdminClick}
-          className="text-[10px] font-black uppercase tracking-[0.6em] text-black/10 hover:text-black transition-all duration-700 hover:tracking-[0.8em]"
+          onClick={() => isLoggedIn ? navigate('/admin') : setShowLogin(true)}
+          className="text-[10px] font-black uppercase tracking-[0.8em] text-black/5 hover:text-black/40 transition-all duration-700 hover:tracking-[1em]"
         >
-          {isLoggedIn ? "Root Control" : "System Entry"}
+          {isLoggedIn ? "Root Control" : "System Login"}
         </button>
       </div>
 
@@ -293,17 +224,15 @@ const Storefront = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[1000] bg-white flex flex-col overflow-y-auto"
+            className="fixed inset-0 z-[2500] bg-white flex flex-col overflow-y-auto"
             data-lenis-prevent
           >
-            {/* Modal Navigation */}
-            <div className="sticky top-0 h-24 px-8 sm:px-16 flex items-center justify-between bg-white/95 backdrop-blur-2xl z-[1001] border-b border-black/5">
-               <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.3 }}>
-                 <h2 className="text-xl sm:text-2xl font-[800] tracking-tighter text-black uppercase">{selectedModel.name}</h2>
-               </motion.div>
+            {/* Modal Header */}
+            <div className="sticky top-0 h-24 px-8 sm:px-16 flex items-center justify-between bg-white/95 backdrop-blur-xl z-[2600] border-b border-black/5">
+               <h2 className="text-xl sm:text-2xl font-[900] tracking-tighter text-black uppercase">{selectedModel.name}</h2>
                <button 
                 onClick={() => setSelectedModel(null)}
-                className="group flex items-center gap-6 text-[10px] font-black uppercase tracking-[0.3em] text-black/30 hover:text-black transition-all"
+                className="group flex items-center gap-6 text-[10px] font-black uppercase tracking-widest text-black/30 hover:text-black transition-all"
                >
                  <span>Exit View</span>
                  <div className="w-12 h-12 border border-black/5 rounded-full flex items-center justify-center group-hover:border-black group-hover:bg-black group-hover:text-white transition-all duration-500">
@@ -314,88 +243,79 @@ const Storefront = () => {
 
             <div className="flex flex-col w-full">
                {/* 3D Viewport - Mandatory Top Position */}
-               <div className="w-full h-[65vh] sm:h-[82vh] bg-[#fdfdfd] relative overflow-hidden">
+               <div className="w-full h-[65vh] sm:h-[80vh] bg-[#fafafa] relative overflow-hidden">
                   <Suspense fallback={null}>
                     <ModelViewer modelUrl={selectedModel.modelUrl} key={selectedModel.id} />
                   </Suspense>
                   
-                  <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 0.2, y: 0 }}
-                    transition={{ delay: 1 }}
-                    className="absolute bottom-12 left-1/2 -translate-x-1/2 flex items-center gap-12 pointer-events-none"
-                  >
-                    <span className="text-[9px] font-black uppercase tracking-[0.4em]">Drag to Rotate</span>
-                    <div className="w-1 h-1 bg-black rounded-full" />
-                    <span className="text-[9px] font-black uppercase tracking-[0.4em]">Pinch to Zoom</span>
-                  </motion.div>
+                  {/* Interaction Instructions */}
+                  <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex items-center gap-8 opacity-20 pointer-events-none">
+                    <span className="text-[9px] font-black uppercase tracking-widest">Orbit</span>
+                    <div className="w-10 h-[1px] bg-black" />
+                    <span className="text-[9px] font-black uppercase tracking-widest">Detail</span>
+                  </div>
                </div>
                
-               {/* Metadata Details - Strictly Below */}
+               {/* Information & Download - Strictly Below the Model */}
                <div className="max-w-[1400px] mx-auto w-full px-8 sm:px-16 py-24 sm:py-48">
-                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-24 lg:gap-32">
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-20 lg:gap-32">
+                    
+                    {/* Details Column */}
                     <div className="lg:col-span-7">
-                      <motion.div 
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 1 }}
-                      >
-                        <h4 className="text-[10px] font-black uppercase tracking-[0.5em] text-black/10 mb-10">Detailed Narrative</h4>
+                      <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+                        <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-black/20 mb-10">Narrative</h4>
                         <p className="text-4xl sm:text-5xl lg:text-6xl font-medium text-black leading-[1.1] tracking-tighter mb-20">
-                          Precision-engineered spatial volume with high-fidelity texture maps. Optimized for web-based AR/VR frameworks.
+                          A high-fidelity spatial volume engineered for seamless integration into next-gen luxury platforms. Optimized for real-time fidelity.
                         </p>
                         
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-20 gap-y-16 pt-20 border-t border-black/5">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-16 pt-20 border-t border-black/5">
                           <div className="space-y-4">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-black/20 italic">Foundation</span>
-                            <p className="text-lg font-bold uppercase tracking-tight">GLB 2.0 Binary</p>
+                            <span className="text-[9px] font-black uppercase tracking-widest text-black/20">Protocol</span>
+                            <p className="text-base font-bold uppercase">GLB v2.0 Binary</p>
                           </div>
                           <div className="space-y-4">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-black/20 italic">Optimization</span>
-                            <p className="text-lg font-bold uppercase tracking-tight">Draco Compressed</p>
+                            <span className="text-[9px] font-black uppercase tracking-widest text-black/20">PBR Data</span>
+                            <p className="text-base font-bold uppercase">4K Textures / Metallic</p>
                           </div>
                           <div className="space-y-4">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-black/20 italic">Materiality</span>
-                            <p className="text-lg font-bold uppercase tracking-tight">Physical Based Rendering</p>
+                            <span className="text-[9px] font-black uppercase tracking-widest text-black/20">Spatial Check</span>
+                            <p className="text-base font-bold uppercase">Verified Integrity</p>
                           </div>
                           <div className="space-y-4">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-black/20 italic">Hash Checksum</span>
-                            <p className="text-lg font-bold uppercase tracking-tight truncate">{selectedModel.public_id.slice(0, 16)}</p>
+                            <span className="text-[9px] font-black uppercase tracking-widest text-black/20">Hash ID</span>
+                            <p className="text-base font-bold uppercase truncate">{selectedModel.public_id.slice(-16)}</p>
                           </div>
                         </div>
                       </motion.div>
                     </div>
 
-                    <div className="lg:col-span-5">
+                    {/* Action Column */}
+                    <div className="lg:col-span-5 flex flex-col items-center">
                       <motion.div 
-                        initial={{ opacity: 0, scale: 0.98 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8 }}
-                        className="sticky top-40 p-12 sm:p-20 bg-[#f9f9f9] rounded-[4rem] border border-black/5 text-center shadow-sm"
+                        initial={{ opacity: 0, scale: 0.98 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}
+                        className="w-full p-12 sm:p-20 bg-[#f9f9f9] rounded-[4rem] border border-black/[0.03] text-center sticky top-40"
                       >
-                        <div className="mb-12">
-                           <p className="text-3xl font-[900] uppercase tracking-tighter">Acquisition</p>
-                           <p className="text-[10px] font-black text-black/20 uppercase tracking-[0.4em] mt-4 italic">Standard License v.01</p>
-                        </div>
+                        <span className="text-[10px] font-black uppercase tracking-[0.5em] text-black/20 block mb-6">Commercial Usage</span>
+                        <p className="text-3xl font-[900] tracking-tighter uppercase mb-12 leading-none">Vault Asset<br/>Acquisition</p>
                         
                         <a 
                           href={selectedModel.modelUrl} 
                           download={`${selectedModel.name.replace(/\s+/g, '_')}.glb`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="w-full bg-black text-white text-[13px] font-black uppercase tracking-[0.3em] py-8 rounded-[2.5rem] transition-all hover:scale-[1.03] hover:shadow-2xl shadow-black/20 block text-center mb-8"
+                          target="_blank" rel="noreferrer"
+                          className="w-full bg-black text-white text-[12px] font-black uppercase tracking-[0.3em] py-8 rounded-[2.5rem] transition-all hover:scale-[1.03] active:scale-[0.97] shadow-2xl shadow-black/20 block text-center mb-10"
                         >
-                          Download Data
+                          Acquire Data
                         </a>
                         
-                        <div className="flex items-center justify-between text-[9px] font-black uppercase tracking-widest text-black/30">
-                          <span>Secure Handshake</span>
-                          <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+                        <div className="h-[1px] w-full bg-black/5 mb-10" />
+                        
+                        <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-black/30">
+                          <span>Verified Link</span>
+                          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
                         </div>
                       </motion.div>
                     </div>
+
                   </div>
                </div>
             </div>
@@ -409,34 +329,27 @@ const Storefront = () => {
 };
 
 const Navbar = () => (
-  <nav className="fixed top-0 left-0 right-0 h-24 sm:h-32 bg-white/80 backdrop-blur-xl z-[500] px-8 sm:px-16 flex items-center justify-between border-b border-black/5">
-    <Link to="/" className="text-3xl font-[900] tracking-tighter text-black uppercase">Archive</Link>
-    <div className="hidden sm:flex gap-16 text-[10px] font-black uppercase tracking-[0.4em] text-black/30">
-      <Link to="/" className="text-black hover:tracking-[0.6em] transition-all">Vault</Link>
-      <Link to="/admin" className="hover:text-black hover:tracking-[0.6em] transition-all">Systems</Link>
-      <a href="#" className="hover:text-black hover:tracking-[0.6em] transition-all italic">Legal</a>
-    </div>
-    <div className="w-10 h-10 border border-black/10 rounded-full flex items-center justify-center sm:hidden">
-      <div className="w-4 h-[1.5px] bg-black" />
+  <nav className="fixed top-0 left-0 right-0 h-24 sm:h-32 bg-white/90 backdrop-blur-xl z-[500] px-8 sm:px-16 flex items-center justify-between border-b border-black/5">
+    <Link to="/" className="text-3xl font-[900] tracking-tighter text-black uppercase">VAULT</Link>
+    <div className="flex gap-12 text-[10px] font-black uppercase tracking-[0.3em] text-black/30">
+      <Link to="/" className="text-black transition-all">Archive</Link>
+      <Link to="/admin" className="hover:text-black transition-all">System</Link>
     </div>
   </nav>
 );
 
 const Footer = () => (
   <footer className="py-40 px-8 sm:px-16 border-t border-black/5 bg-white">
-    <div className="max-w-[1400px] mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-24">
-      <div className="space-y-12">
-        <h3 className="text-3xl font-black tracking-tighter uppercase leading-none">Luxe Spatial<br/>Systems</h3>
-        <p className="text-lg font-medium text-black/40 max-w-sm leading-relaxed">Pioneering high-fidelity interactive experiences for the decentralized web.</p>
-        <p className="text-[10px] font-black uppercase tracking-widest text-black/20">© 2025 Archive Division. All rights reserved.</p>
+    <div className="max-w-[1400px] mx-auto w-full flex flex-col md:flex-row justify-between items-start md:items-center gap-20">
+      <div className="space-y-6">
+        <h3 className="text-2xl font-[900] tracking-tighter uppercase leading-none">Archives of<br/>The Future</h3>
+        <p className="text-sm font-medium text-black/30 max-w-xs leading-relaxed italic">Bridging spatial luxury with modern engineering protocols.</p>
       </div>
-      <div className="flex flex-col md:items-end justify-between gap-12">
-         <div className="text-[14vw] sm:text-[8vw] font-[900] text-black/[0.03] leading-none select-none tracking-tighter italic">LUXE_MODELS</div>
-         <div className="flex flex-wrap gap-12 text-[10px] font-black uppercase tracking-[0.5em] text-black/40">
-           <a href="#" className="hover:text-black transition-colors">Social</a>
-           <a href="#" className="hover:text-black transition-colors">Contact</a>
-           <a href="#" className="hover:text-black transition-colors">Privacy</a>
-         </div>
+      <div className="text-[12vw] font-[900] text-black/[0.02] leading-none select-none tracking-tighter italic">LUXE_SYSTEMS</div>
+      <div className="flex flex-col gap-6 text-[10px] font-black uppercase tracking-[0.4em] text-black/30">
+        <a href="#" className="hover:text-black transition-colors">Instagram</a>
+        <a href="#" className="hover:text-black transition-colors">Behance</a>
+        <a href="#" className="hover:text-black transition-colors">Private</a>
       </div>
     </div>
   </footer>
